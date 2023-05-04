@@ -1,2 +1,4 @@
 pandas==1.3.5
 torch==1.12.1
+presidio-analyzer
+#python -m spacy download en_core_web_lg

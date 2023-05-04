@@ -56,3 +56,12 @@ class PositionalEmbedding(nn.Module):
     def forward(self, x):
         x = x + self.pe[:, : x.size(1)].requires_grad_(False)
         return self.dropout(x)
+
+class TransformerEmbedding(nn.Module):
+    def __init__(self, token_embedding, pe_embedding):
+        super(TransformerEmbedding, self).__init__()
+        self.token_embedding = token_embedding
+        self.pe_embedding = pe_embedding
+    
+    def forward(self, x):
+        return self.pe_embedding(self.token_embedding(x))
