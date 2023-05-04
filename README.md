@@ -17,12 +17,13 @@ conda activate applied-transformers
 
 Install Dependencies:
 ```bash
-pip install -r requirements.tx
+pip install -r requirements.txt
 ```
 
 1. Transformer Model from Scratch {Vaswani et. al, 2017} | [Python Code](https://github.com/shahrukhx01/applied-transformers/tree/main/transformer_architectures/vanilla) 
 2. BERT Model from Scratch {Devlin et. al, 2018} | [Coming Soon]() 
-3. BART Model from Scratch {Lewis et. al, 2019} | [Coming Soon]()
+3. RETRO Model from Scratch {Borgeaud et. al, 2021} | [Coming Soon]()
+4. BART Model from Scratch {Lewis et. al, 2019} | [Coming Soon]()
 
 ## References
 
