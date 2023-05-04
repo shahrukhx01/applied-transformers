@@ -1,5 +1,5 @@
 # Applied Transformers (PyTorch)
-A playground experimental repo to explore various transformer architectures from scratch.
+A playground-like experimental project to explore various transformer architectures from scratch.
 
 Resources:
 1. Intuition behind Attention Mechanism | [Notebook](https://github.com/shahrukhx01/applied-transformers/blob/main/intuitions/0.%20Transformers%20%3E%20Understanding%20Self-Attention%20and%20Cross-Attention.ipynb)
