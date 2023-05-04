@@ -20,8 +20,8 @@ Install Dependencies:
 pip install -r requirements.tx
 ```
 
-1 Transformer Model from Scratch {Vaswani et. al, 2017} | [Python Code](https://github.com/shahrukhx01/applied-transformers/tree/main/transformer_architectures/vanilla) <br/>
-2. BERT Model from Scratch {Devlin et. al, 2018} | [Coming Soon]() <br/>
+1. Transformer Model from Scratch {Vaswani et. al, 2017} | [Python Code](https://github.com/shahrukhx01/applied-transformers/tree/main/transformer_architectures/vanilla) 
+2. BERT Model from Scratch {Devlin et. al, 2018} | [Coming Soon]() 
 3. BART Model from Scratch {Lewis et. al, 2019} | [Coming Soon]()<br/>
 
 ## References
