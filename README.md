@@ -25,7 +25,15 @@ pip install -r requirements.txt
 ```
 
 1. Transformer Model from Scratch {Vaswani et. al, 2017} | [Python Code](https://github.com/shahrukhx01/applied-transformers/tree/main/transformer_architectures/vanilla)
-   TODO:
+
+```bash
+# example training run
+python transformer_architectures/vanilla/run.py --num_layers=5\
+ --d_model=256 --d_ff=1024 --num_heads=4 --dropout=0.2 \
+--train_path=<PATH_TO_TRAIN_DATASET>.csv  --valid_path=<PATH_TO_VALIDATION_DATASET>.csv
+```
+
+TODO:
 
 - Text Generation Schemes
 - Text Generation Eval Metrics
@@ -34,8 +42,7 @@ pip install -r requirements.txt
 
 2. # BERT Model from Scratch {Devlin et. al, 2018} | [Coming Soon]()
 
-3. BERT Model from Scratch {Devlin et. al, 2018} | [Coming Soon]()
-   > > > > > > > 0c55b27 (feat: add complete training)
+3. BERT Model from Scratch {Lewis et. al, 2019} | [Coming Soon]()
 4. RETRO Model from Scratch {Borgeaud et. al, 2021} | [Coming Soon]()
 5. BART Model from Scratch {Lewis et. al, 2019} | [Coming Soon]()
 
