@@ -1,7 +1,9 @@
 import copy
+import torch
 import torch.nn as nn
 import click
 from transformer_architectures.vanilla.data.preprocess import build_vocab
+from transformer_architectures.vanilla.inference.test_inference import inference_from_pretrained
 
 from transformer_architectures.vanilla.model.attention import MultiHeadedAttention
 from transformer_architectures.vanilla.model.embedding import PositionalEncoding, TokenEmbedding
@@ -56,8 +58,11 @@ def make_model(
               help="Train dataset path")
 @click.option("--valid_path", "-v",
               help="Validation dataset path")
+@click.option("--load_pretrained", "-p",
+              default=None,
+              help="Path to pre-trained checkpoint, (default None)")
 def transformer_run(num_layers, d_model, d_ff, num_heads, dropout, 
-                    train_path, valid_path):
+                    train_path, valid_path, load_pretrained):
     config = {
         "batch_size": 8,
         "distributed": False,
@@ -75,19 +80,29 @@ def transformer_run(num_layers, d_model, d_ff, num_heads, dropout,
     src_vocab=len(vocab), tgt_vocab=len(vocab), N=num_layers, d_model=d_model, 
     d_ff=d_ff, h=num_heads, dropout=dropout 
     )
-    print(len(vocab))   
-    train_worker(
-    train_dataset_path=train_path,
-    validation_dataset_path=valid_path,
-    src_column='source',
-    tgt_column='target',
-    vocab_src=vocab,
-    vocab_tgt=vocab,
-    model=transformer_model,
-    config=config,
-    d_model = 512,
-    is_distributed=False
-)
+    if load_pretrained:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        transformer_model.load_state_dict(
+        torch.load(load_pretrained, map_location=device)
+    )
+        while True:
+            example = input('Enter your text: ')
+            inference_from_pretrained(model=transformer_model, example=example, vocab=vocab, 
+                                  src_pipeline=lambda x: str(x).split(), device=device)
+            print("\n"*2)
+    else:
+        train_worker(
+        train_dataset_path=train_path,
+        validation_dataset_path=valid_path,
+        src_column='source',
+        tgt_column='target',
+        vocab_src=vocab,
+        vocab_tgt=vocab,
+        model=transformer_model,
+        config=config,
+        d_model = d_model,
+        is_distributed=False
+    )
 
 if __name__ == "__main__":
     transformer_run()
