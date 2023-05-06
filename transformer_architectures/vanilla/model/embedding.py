@@ -5,10 +5,13 @@ import math
 
 class TokenEmbedding(nn.Module):
     def __init__(self, vocab_size, d_model):
+        super(TokenEmbedding, self).__init__()
         self.embed = nn.Embedding(vocab_size, d_model)
+        self.d_model = d_model
 
     def forward(self, x):
-        return self.embed(x)
+        return self.embed(x) * math.sqrt(self.d_model)
+
 
 
 """
@@ -37,9 +40,9 @@ class PositionalEmbedding(nn.Module):
 """
 
 
-class PositionalEmbedding(nn.Module):
+class PositionalEncoding(nn.Module):
     def __init__(self, d_model, dropout, max_len=5000):
-        super(PositionalEmbedding, self).__init__()
+        super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
 
         # Compute the positional encodings once in log space.
@@ -56,12 +59,3 @@ class PositionalEmbedding(nn.Module):
     def forward(self, x):
         x = x + self.pe[:, : x.size(1)].requires_grad_(False)
         return self.dropout(x)
-
-class TransformerEmbedding(nn.Module):
-    def __init__(self, token_embedding, pe_embedding):
-        super(TransformerEmbedding, self).__init__()
-        self.token_embedding = token_embedding
-        self.pe_embedding = pe_embedding
-    
-    def forward(self, x):
-        return self.pe_embedding(self.token_embedding(x))

@@ -4,9 +4,10 @@ import copy
 
 
 class LayerNorm(nn.Module):
-    def __init__(self, d_model, epsilon=1e-9):
-        self.gamma = nn.Parameter(nn.ones(d_model))
-        self.beta = nn.Parameter(nn.zeros(d_model))
+    def __init__(self, features_dim, epsilon=1e-9):
+        super(LayerNorm, self).__init__()
+        self.gamma = nn.Parameter(torch.ones(features_dim))
+        self.beta = nn.Parameter(torch.zeros(features_dim))
         self.epsilon = epsilon
 
     def forward(self, x):
@@ -16,8 +17,9 @@ class LayerNorm(nn.Module):
 
 
 class SubLayerConnection(nn.Module):
-    def __init__(self, d_model, dropout):
-        self.norm = LayerNorm(d_model=d_model)
+    def __init__(self, features_dim, dropout):
+        super(SubLayerConnection, self).__init__()
+        self.norm = LayerNorm(features_dim=features_dim)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x, layer):
@@ -33,13 +35,6 @@ class PositionwiseFeedForward(nn.Module):
 
     def forward(self, x):
         return self.w_2(self.dropout(self.w_1(x).relu()))
-
-
-def subsequent_mask(size):
-    "Mask out subsequent positions."
-    attn_shape = (1, size, size)
-    subsequent_mask = torch.triu(torch.ones(attn_shape), diagonal=1).type(torch.uint8)
-    return subsequent_mask == 0
 
 
 def clones(layer, N):
