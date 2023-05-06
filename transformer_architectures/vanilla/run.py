@@ -1,6 +1,7 @@
 import copy
 import torch.nn as nn
 import click
+from transformer_architectures.vanilla.data.preprocess import build_vocab
 
 from transformer_architectures.vanilla.model.attention import MultiHeadedAttention
 from transformer_architectures.vanilla.model.embedding import PositionalEncoding, TokenEmbedding
@@ -9,6 +10,7 @@ from transformer_architectures.vanilla.model.decoder import Decoder, DecoderLaye
 from transformer_architectures.vanilla.model.generator import Generator
 from transformer_architectures.vanilla.model.transformer import Transformer
 from transformer_architectures.vanilla.model.utils import PositionwiseFeedForward
+from transformer_architectures.vanilla.train.train import train_worker
 
 
 def make_model(
@@ -50,12 +52,42 @@ def make_model(
 @click.option("--dropout", "-d",
               default=0.1,
               help="Dropout probability (default: 0.1)")
-def transformer_run(num_layers, d_model, d_ff, num_heads, dropout):
+@click.option("--train_path", "-t",
+              help="Train dataset path")
+@click.option("--valid_path", "-v",
+              help="Validation dataset path")
+def transformer_run(num_layers, d_model, d_ff, num_heads, dropout, 
+                    train_path, valid_path):
+    config = {
+        "batch_size": 8,
+        "distributed": False,
+        "num_epochs": 1,
+        "accum_iter": 10,
+        "base_lr": 1.0,
+        "max_padding": 72,
+        "warmup": 10,
+        "file_prefix": "transformer_test",
+    }    
+    vocab = build_vocab(file_path=train_path,
+                src_column='source',
+                tgt_column='target',) 
     transformer_model = make_model(
-    src_vocab=10, tgt_vocab=10, N=num_layers, d_model=d_model, 
+    src_vocab=len(vocab), tgt_vocab=len(vocab), N=num_layers, d_model=d_model, 
     d_ff=d_ff, h=num_heads, dropout=dropout 
     )
-    print(transformer_model)    
+    print(len(vocab))   
+    train_worker(
+    train_dataset_path=train_path,
+    validation_dataset_path=valid_path,
+    src_column='source',
+    tgt_column='target',
+    vocab_src=vocab,
+    vocab_tgt=vocab,
+    model=transformer_model,
+    config=config,
+    d_model = 512,
+    is_distributed=False
+)
 
 if __name__ == "__main__":
     transformer_run()
