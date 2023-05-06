@@ -24,7 +24,7 @@ Install Dependencies:
 pip install -r requirements.txt
 ```
 
-1. Transformer Model from Scratch {Vaswani et. al, 2017} | [Python Code](https://github.com/shahrukhx01/applied-transformers/tree/main/transformer_architectures/vanilla)
+1. Transformer Model from Scratch {Vaswani et. al, 2017} | [Dataset Sample](https://github.com/shahrukhx01/applied-transformers/blob/main/transformer_architectures/vanilla/data/sample_data.csv) | [Python Code](https://github.com/shahrukhx01/applied-transformers/tree/main/transformer_architectures/vanilla)
 
 ```bash
 # example training run
@@ -32,10 +32,6 @@ python transformer_architectures/vanilla/run.py --num_layers=5\
  --d_model=256 --d_ff=1024 --num_heads=4 --dropout=0.2 \
 --train_path=<PATH_TO_TRAIN_DATASET>.csv  --valid_path=<PATH_TO_VALIDATION_DATASET>.csv
 ```
-2. GPT Model from Scratch {Radford et. al, 2018} | [Coming Soon]()
-2. BERT Model from Scratch {Devlin et. al, 2018} | [Coming Soon]()
-3. RETRO Model from Scratch {Borgeaud et. al, 2021} | [Coming Soon]()
-4. BART Model from Scratch {Lewis et. al, 2019} | [Coming Soon]()
 
 TODO:
 
@@ -43,6 +39,12 @@ TODO:
 - Text Generation Eval Metrics
 - Sequence Tokenization Algorithms
 - Optimized Einsum Implementation
+
+2. BERT Model from Scratch {Devlin et. al, 2018} | [Coming Soon]()
+
+3. BERT Model from Scratch {Lewis et. al, 2019} | [Coming Soon]()
+4. RETRO Model from Scratch {Borgeaud et. al, 2021} | [Coming Soon]()
+5. BART Model from Scratch {Lewis et. al, 2019} | [Coming Soon]()
 
 ## References
 
