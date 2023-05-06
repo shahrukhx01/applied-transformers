@@ -1,34 +1,43 @@
 # Applied Transformers (PyTorch)
+
 A playground-like experimental project to explore various transformer architectures from scratch.
 
-
-
 ## Resources:
+
 ### Intuitions:
+
 1. Intuition behind Attention Mechanism | [Notebook](https://github.com/shahrukhx01/applied-transformers/blob/main/intuitions/0.%20Transformers%20%3E%20Understanding%20Self-Attention%20and%20Cross-Attention.ipynb)
-2. Intuition behind individual Transformer Blocks | [Notebook](https://github.com/shahrukhx01/applied-transformers/blob/main/intuitions/1.%20Transformers%20%3E%20Transformer%20from%20scratch%20(Annotated%20Transformer).ipynb)
+2. Intuition behind individual Transformer Blocks | [Notebook](<https://github.com/shahrukhx01/applied-transformers/blob/main/intuitions/1.%20Transformers%20%3E%20Transformer%20from%20scratch%20(Annotated%20Transformer).ipynb>)
 
 ### Implementations from Scratch:
+
 Create virtual environment:
+
 ```bash
 conda create -n applied-transformers python=3.10
 conda activate applied-transformers
 ```
 
 Install Dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-1. Transformer Model from Scratch {Vaswani et. al, 2017} | [Python Code](https://github.com/shahrukhx01/applied-transformers/tree/main/transformer_architectures/vanilla) 
-TODO:
+1. Transformer Model from Scratch {Vaswani et. al, 2017} | [Python Code](https://github.com/shahrukhx01/applied-transformers/tree/main/transformer_architectures/vanilla)
+   TODO:
+
 - Text Generation Schemes
 - Text Generation Eval Metrics
 - Sequence Tokenization Algorithms
 - Optimized Einsum Implementation
-2. BERT Model from Scratch {Devlin et. al, 2018} | [Coming Soon]() 
-3. RETRO Model from Scratch {Borgeaud et. al, 2021} | [Coming Soon]()
-4. BART Model from Scratch {Lewis et. al, 2019} | [Coming Soon]()
+
+2. # BERT Model from Scratch {Devlin et. al, 2018} | [Coming Soon]()
+
+3. BERT Model from Scratch {Devlin et. al, 2018} | [Coming Soon]()
+   > > > > > > > 0c55b27 (feat: add complete training)
+4. RETRO Model from Scratch {Borgeaud et. al, 2021} | [Coming Soon]()
+5. BART Model from Scratch {Lewis et. al, 2019} | [Coming Soon]()
 
 ## References
 
