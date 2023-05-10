@@ -6,7 +6,7 @@ A playground-like experimental project to explore various transformer architectu
 
 ### Intuitions:
 
-1. Intuition behind Attention Mechanism | [Notebook](<https://github.com/shahrukhx01/applied-transformers/blob/main/intuitions/0.%20Transformers%20%3E%20Understanding%20Self-Attention%20and%20Cross-Attention.ipynb>)
+1. Intuition behind Attention Mechanism | [Notebook](<https://github.com/shahrukhx01/applied-transformers/blob/main/intuitions/0.%20Transformers%20%3E%20Understanding%20Self-Attention%20and%20Cross-Attention-Copy1.ipynb>)
 2. Intuition behind individual Transformer Blocks | [Notebook](<https://github.com/shahrukhx01/applied-transformers/blob/main/intuitions/1.%20Transformers%20%3E%20Transformer%20from%20scratch%20(Annotated%20Transformer).ipynb>)
 3. Intuition behind Chunked Cross-attention by RETRO Deepmind | [Notebook](<https://github.com/shahrukhx01/applied-transformers/blob/main/intuitions/2.%20Transformers%20%3E%20(Deepmind%20RETRO)%20Chunked%20Cross-Attention.ipynb>)
 
