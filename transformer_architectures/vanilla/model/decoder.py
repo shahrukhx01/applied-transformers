@@ -21,14 +21,17 @@ class DecoderLayer(nn.Module):
         self.attention = attention
         self.cross_attention = cross_attention
         self.ff = ff
+        # set decoder only for GPT-like models
+        self.decoder_only = decoder_only
         self.sublayers = clones(SubLayerConnection(features_dim=features_dim, 
                                             dropout=dropout), 2 if decoder_only else 3)
         self.features_dim = features_dim
 
     def forward(self, x, memory=None, src_mask=None, tgt_mask=None):
         x = self.sublayers[0](x, lambda x: self.attention(x, x, x, tgt_mask))
-        if memory.any():
+        # skip cross attention for GPT-like(decoder-only) models.
+        if not self.decoder_only:
             x = self.sublayers[1](
                 x, lambda x: self.cross_attention(x, memory, memory, src_mask)
             )
-        return self.sublayers[2](x, self.ff)
+        return self.sublayers[-1](x, self.ff)

@@ -88,3 +88,42 @@ def collate_batch(
     src = torch.stack(src_list)
     tgt = torch.stack(tgt_list)
     return (src, tgt)
+
+def collate_batch_decoder_only(
+    batch,
+    pipeline,
+    vocab,
+    device,
+    max_padding=128,
+    pad_id=2,
+):
+    bs_id = torch.tensor([0], device=device)  # <s> token id
+    eos_id = torch.tensor([1], device=device)  # </s> token id
+    seq_list = []
+    for (_src, _tgt) in batch:
+        processed_seq = torch.cat(
+            [
+                bs_id,
+                torch.tensor(
+                    vocab(pipeline(_src, _tgt)),
+                    dtype=torch.int64,
+                    device=device,
+                ),
+                eos_id,
+            ],
+            0,
+        )
+        seq_list.append(
+            # warning - overwrites values for negative values of padding - len
+            pad(
+                processed_seq,
+                (
+                    0,
+                    max_padding - len(processed_seq),
+                ),
+                value=pad_id,
+            )
+        )
+        
+    seq = torch.stack(seq_list)
+    return Batch(seq, seq, pad_id)
