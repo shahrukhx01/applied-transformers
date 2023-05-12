@@ -68,7 +68,7 @@ def make_model(
 def gpt_run(num_layers, d_model, d_ff, num_heads, dropout, 
                     train_path, valid_path, load_pretrained, tokenizer):
     config = {
-        "batch_size": 8,
+        "batch_size": 32,
         "distributed": False,
         "num_epochs": 1,
         "accum_iter": 10,
@@ -101,8 +101,7 @@ def gpt_run(num_layers, d_model, d_ff, num_heads, dropout,
     )
     for idx, batch in enumerate(train_dataloader):
         logits, loss = gpt_model(x=batch.tgt, mask=batch.tgt_mask, targets=batch.tgt_y)
-        #print(loss.item())
-        break
+        print(loss.item())
     # # if load_pretrained:
     #     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     #     transformer_model.load_state_dict(

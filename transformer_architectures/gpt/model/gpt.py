@@ -14,13 +14,12 @@ class GPT(nn.Module):
         x = self.decoder(self.embedding(x), memory=None, src_mask=None, 
                             tgt_mask=mask)
         logits = self.lm_head(x) # (B,T,vocab_size)
-
         if targets is None:
             loss = None
         else:
             B, T, C = logits.shape
             logits = logits.view(B*T, C)
-            targets = targets.view(B*T)
+            targets = targets.reshape(B*T)
             loss = F.cross_entropy(logits, targets)
 
         return logits, loss
