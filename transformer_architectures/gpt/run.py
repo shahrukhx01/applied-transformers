@@ -2,17 +2,15 @@ import copy
 import torch
 import torch.nn as nn
 import click
-from transformer_architectures.vanilla.data.dataloader import create_dataloaders_decoder_only
-from transformer_architectures.vanilla.data.preprocess import build_vocab, tokenizer_fn_map
+from transformer_architectures.vanilla.data.preprocess import build_vocab
 from transformer_architectures.vanilla.inference.test_inference import inference_from_pretrained
-
 from transformer_architectures.vanilla.model.attention import MultiHeadedAttention
 from transformer_architectures.vanilla.model.embedding import PositionalEncoding, TokenEmbedding
 from transformer_architectures.vanilla.model.decoder import Decoder, DecoderLayer
 from transformer_architectures.vanilla.model.generator import Generator
 from transformer_architectures.gpt.model.gpt import GPT
 from transformer_architectures.vanilla.model.utils import PositionwiseFeedForward
-from transformer_architectures.vanilla.train.train import train_worker
+from transformer_architectures.gpt.train.train import train_worker
 
 
 def make_model(
@@ -87,44 +85,44 @@ def gpt_run(num_layers, d_model, d_ff, num_heads, dropout,
     vocab_size=len(vocab), N=num_layers, d_model=d_model, 
     d_ff=d_ff, h=num_heads, dropout=dropout 
     )
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    train_dataloader, valid_dataloader = create_dataloaders_decoder_only(
-        train_path,
-        valid_path,
-        src_column='source',
-        tgt_column='target',
-        device=device,
-        vocab=vocab,
-        tokenization_fn=tokenizer_fn_map[tokenizer],
-        batch_size=config["batch_size"],
-        max_padding=config["max_padding"],
-    )
-    for idx, batch in enumerate(train_dataloader):
-        logits, loss = gpt_model(x=batch.tgt, mask=batch.tgt_mask, targets=batch.tgt_y)
-        print(loss.item())
-    # # if load_pretrained:
-    #     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    #     transformer_model.load_state_dict(
-    #     torch.load(load_pretrained, map_location=device)
-    # )
-    #     while True:
-    #         example = input('Enter your text: ')
-    #         inference_from_pretrained(model=transformer_model, example=example, vocab=vocab, 
-    #                               src_pipeline=lambda x: str(x).split(), device=device)
-    #         print("\n"*2)
-    # else:
-    #     train_worker(
-    #     train_dataset_path=train_path,
-    #     validation_dataset_path=valid_path,
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # train_dataloader, valid_dataloader = create_dataloaders_decoder_only(
+    #     train_path,
+    #     valid_path,
     #     src_column='source',
     #     tgt_column='target',
-    #     vocab_src=vocab,
-    #     vocab_tgt=vocab,
-    #     model=transformer_model,
-    #     config=config,
-    #     d_model = d_model,
-    #     is_distributed=False
+    #     device=device,
+    #     vocab=vocab,
+    #     tokenization_fn=tokenizer_fn_map[tokenizer],
+    #     batch_size=config["batch_size"],
+    #     max_padding=config["max_padding"],
     # )
+    # for idx, batch in enumerate(train_dataloader):
+    #     logits, loss = gpt_model(x=batch.tgt, mask=batch.tgt_mask, targets=batch.tgt_y)
+    #     print(loss.item())
+    if load_pretrained:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        gpt_model.load_state_dict(
+        torch.load(load_pretrained, map_location=device)
+    )
+        while True:
+            example = input('Enter your text: ')
+            inference_from_pretrained(model=gpt_model, example=example, vocab=vocab, 
+                                  src_pipeline=lambda x: str(x).split(), device=device)
+            print("\n"*2)
+    else:
+        train_worker(
+            train_path,
+            valid_path,
+            src_column='source',
+            tgt_column='target',
+            vocab=vocab,
+            model=gpt_model,
+            config=config,
+            tokenizer=tokenizer,
+            d_model = 512,
+            is_distributed=False,
+    )
 
 if __name__ == "__main__":
     gpt_run()
