@@ -11,3 +11,7 @@ class GPT(nn.Module):
     def forward(self, x, mask):
         memory = None
         return self.decoder(self.embedding(x), memory, src_mask=None, tgt_mask=mask)
+    
+
+
+

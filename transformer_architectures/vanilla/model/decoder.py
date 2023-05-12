@@ -15,17 +15,20 @@ class Decoder(nn.Module):
 
 
 class DecoderLayer(nn.Module):
-    def __init__(self, features_dim, attention, cross_attention, ff, dropout):
+    def __init__(self, features_dim, attention, cross_attention, ff, dropout, 
+                 decoder_only=False):
         super(DecoderLayer, self).__init__()
         self.attention = attention
         self.cross_attention = cross_attention
         self.ff = ff
-        self.sublayers = clones(SubLayerConnection(features_dim=features_dim, dropout=dropout), 3)
+        self.sublayers = clones(SubLayerConnection(features_dim=features_dim, 
+                                            dropout=dropout), 2 if decoder_only else 3)
         self.features_dim = features_dim
 
-    def forward(self, x, memory, src_mask, tgt_mask):
+    def forward(self, x, memory=None, src_mask=None, tgt_mask=None):
         x = self.sublayers[0](x, lambda x: self.attention(x, x, x, tgt_mask))
-        x = self.sublayers[1](
-            x, lambda x: self.cross_attention(x, memory, memory, src_mask)
-        )
+        if memory.any():
+            x = self.sublayers[1](
+                x, lambda x: self.cross_attention(x, memory, memory, src_mask)
+            )
         return self.sublayers[2](x, self.ff)
