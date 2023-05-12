@@ -51,6 +51,8 @@ def run_epoch(
     """Train a single epoch"""
     start = time.time()
     total_loss = 0
+    total_tokens = 0
+    tokens = 0
     n_accum = 0
     for i, batch in enumerate(data_iter):
         _, loss = model.forward(
@@ -69,7 +71,9 @@ def run_epoch(
                 train_state.accum_step += 1
             scheduler.step()
 
-        total_loss += loss.item()
+        total_loss += loss
+        total_tokens += batch.ntokens
+        tokens += batch.ntokens
         if i % 40 == 1 and (mode == "train" or mode == "train+log"):
             lr = optimizer.param_groups[0]["lr"]
             elapsed = time.time() - start
@@ -78,11 +82,11 @@ def run_epoch(
                     "Epoch Step: %6d | Accumulation Step: %3d | Loss: %6.2f "
                     + "| Learning Rate: %6.1e"
                 )
-                % (i, n_accum, loss / batch.ntokens, lr)
+                % (i, n_accum, total_loss / batch.ntokens, lr)
             )
             start = time.time()
         del loss
-    return total_loss, train_state
+    return total_loss / total_tokens, train_state
 
 
 def train_worker(

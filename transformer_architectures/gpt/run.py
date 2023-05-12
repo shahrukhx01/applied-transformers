@@ -66,10 +66,10 @@ def make_model(
 def gpt_run(num_layers, d_model, d_ff, num_heads, dropout, 
                     train_path, valid_path, load_pretrained, tokenizer):
     config = {
-        "batch_size": 32,
+        "batch_size": 8,
         "distributed": False,
         "num_epochs": 1,
-        "accum_iter": 10,
+        "accum_iter": 1,
         "base_lr": 1.0,
         "max_padding": 410,
         "warmup": 10,
@@ -85,23 +85,8 @@ def gpt_run(num_layers, d_model, d_ff, num_heads, dropout,
     vocab_size=len(vocab), N=num_layers, d_model=d_model, 
     d_ff=d_ff, h=num_heads, dropout=dropout 
     )
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # train_dataloader, valid_dataloader = create_dataloaders_decoder_only(
-    #     train_path,
-    #     valid_path,
-    #     src_column='source',
-    #     tgt_column='target',
-    #     device=device,
-    #     vocab=vocab,
-    #     tokenization_fn=tokenizer_fn_map[tokenizer],
-    #     batch_size=config["batch_size"],
-    #     max_padding=config["max_padding"],
-    # )
-    # for idx, batch in enumerate(train_dataloader):
-    #     logits, loss = gpt_model(x=batch.tgt, mask=batch.tgt_mask, targets=batch.tgt_y)
-    #     print(loss.item())
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     if load_pretrained:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         gpt_model.load_state_dict(
         torch.load(load_pretrained, map_location=device)
     )
