@@ -73,7 +73,7 @@ def gpt_run(num_layers, d_model, d_ff, num_heads, dropout,
         "num_epochs": 1,
         "accum_iter": 10,
         "base_lr": 1.0,
-        "max_padding": 72,
+        "max_padding": 410,
         "warmup": 10,
         "file_prefix": "transformer_test",
     }    
