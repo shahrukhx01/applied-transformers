@@ -2,8 +2,9 @@ import copy
 import torch
 import torch.nn as nn
 import click
-from transformer_architectures.vanilla.data.preprocess import build_vocab
-from transformer_architectures.vanilla.inference.test_inference import inference_from_pretrained
+from transformer_architectures.vanilla.data.dataloader import create_dataloaders_decoder_only
+from transformer_architectures.vanilla.data.preprocess import build_vocab, char_level_tokenizer
+from transformer_architectures.gpt.inference.inference import inference_from_pretrained
 from transformer_architectures.vanilla.model.attention import MultiHeadedAttention
 from transformer_architectures.vanilla.model.embedding import PositionalEncoding, TokenEmbedding
 from transformer_architectures.vanilla.model.decoder import Decoder, DecoderLayer
@@ -11,6 +12,8 @@ from transformer_architectures.vanilla.model.generator import Generator
 from transformer_architectures.gpt.model.gpt import GPT
 from transformer_architectures.vanilla.model.utils import PositionwiseFeedForward
 from transformer_architectures.gpt.train.train import train_worker
+from transformer_architectures.vanilla.data.preprocess import tokenizer_fn_map
+from torch.nn import functional as F
 
 
 def make_model(
@@ -66,7 +69,7 @@ def make_model(
 def gpt_run(num_layers, d_model, d_ff, num_heads, dropout, 
                     train_path, valid_path, load_pretrained, tokenizer):
     config = {
-        "batch_size": 8,
+        "batch_size": 1,
         "distributed": False,
         "num_epochs": 1,
         "accum_iter": 1,
@@ -86,28 +89,48 @@ def gpt_run(num_layers, d_model, d_ff, num_heads, dropout,
     d_ff=d_ff, h=num_heads, dropout=dropout 
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    if load_pretrained:
-        gpt_model.load_state_dict(
-        torch.load(load_pretrained, map_location=device)
+    ### KARPATHY GPT
+    train_dataloader, valid_dataloader = create_dataloaders_decoder_only(
+        train_path,
+        valid_path,
+        src_column='source',
+        tgt_column='target',
+        device=device,
+        vocab=vocab,
+        tokenization_fn=tokenizer_fn_map[tokenizer],
+        batch_size=config["batch_size"],
+        max_padding=config["max_padding"],
     )
-        while True:
-            example = input('Enter your text: ')
-            inference_from_pretrained(model=gpt_model, example=example, vocab=vocab, 
-                                  src_pipeline=lambda x: str(x).split(), device=device)
-            print("\n"*2)
-    else:
-        train_worker(
-            train_path,
-            valid_path,
-            src_column='source',
-            tgt_column='target',
-            vocab=vocab,
-            model=gpt_model,
-            config=config,
-            tokenizer=tokenizer,
-            d_model = 512,
-            is_distributed=False,
+    learning_rate = 3e-4
+    # create a PyTorch optimizer
+    optimizer = torch.optim.AdamW(gpt_model.parameters(), lr=learning_rate)
+    gpt_model.to(device)
+    file_path = "%sfinal.pt" % config["file_prefix"]
+    gpt_model.load_state_dict(
+        torch.load(file_path, map_location=device)
     )
+    for iter in range(2000):
+        if iter > 0:
+            file_path = "%sfinal.pt" % config["file_prefix"]
+            torch.save(gpt_model.state_dict(), file_path)
+        # sample a batch of data
+        for idx, batch in enumerate(train_dataloader):
+            # evaluate the loss
+            logits, loss = gpt_model(x=batch.tgt.to(device), mask=batch.tgt_mask.to(device), targets=batch.tgt_y.to(device))
+            optimizer.zero_grad(set_to_none=True)
+            loss.backward()
+            optimizer.step()
+            if idx%1000 == 0:
+                print(f"Train loss for step {idx+1} in epoch {iter+1}: {loss.item()}")
+                prob =F.softmax(logits, dim=-1)
+                text = "".join([vocab.get_itos()[char.item()] for char in batch.tgt[0].detach().cpu() if char.item()!=2])
+                print(text)
+                pred = []
+                for idx, pchar in enumerate(prob.detach().cpu()):
+                     pred_char = vocab.get_itos()[torch.argmax(pchar).item()]
+                     if pred_char != '<blank>':
+                         pred.append(pred_char)
+                print("".join(pred))
 
 if __name__ == "__main__":
     gpt_run()
