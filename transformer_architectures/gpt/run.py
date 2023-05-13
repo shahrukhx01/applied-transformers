@@ -11,7 +11,6 @@ from transformer_architectures.vanilla.model.decoder import Decoder, DecoderLaye
 from transformer_architectures.vanilla.model.generator import Generator
 from transformer_architectures.gpt.model.gpt import GPT
 from transformer_architectures.vanilla.model.utils import PositionwiseFeedForward
-from transformer_architectures.gpt.train.train import train_worker
 from transformer_architectures.vanilla.data.preprocess import tokenizer_fn_map
 from torch.nn import functional as F
 
