@@ -92,7 +92,7 @@ def gpt_run(num_layers, d_model, d_ff, num_heads, dropout,
         device = 'cpu'
         file_path = "%sfinal.pt" % config["file_prefix"]
         gpt_model.load_state_dict(
-            torch.load(file_path, map_location=device)
+            torch.load(load_pretrained, map_location=device)
         )
         while True:
             example = input('Enter your message: ')
